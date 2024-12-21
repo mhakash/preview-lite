@@ -51,20 +51,10 @@ jobs:
         with:
           name: binaries
 
-      - name: List Files
-        run: ls -R
-
-      # Move downloaded files if necessary
-      - name: Move Artifacts
-        run: mv binaries/* build/ || true  
-      
-      - name: Move Artifacts
-        run: mv binaries/* build/
-
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: build/*
+          artifacts: ./*
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.event.inputs.tag }}
           name: Release ${{ github.event.inputs.tag }}
