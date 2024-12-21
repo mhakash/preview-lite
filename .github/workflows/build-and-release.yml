@@ -1,0 +1,53 @@
+name: Release Binaries
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Release Binaries
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Set up Go
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23
+
+      # Build for macOS
+      - name: Build macOS Binary
+        run: GOOS=darwin GOARCH=arm64 go build -o build/preview-lite-arm64-darwin main.go
+
+      # Build for Windows
+      - name: Build Windows Binary
+        run: GOOS=windows GOARCH=amd64 go build -o build/preview-lite-amd64.exe main.go
+
+      # Upload the binaries as artifacts
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: build/
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: binaries
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.event.inputs.tag }}
+          name: Release ${{ github.event.inputs.tag }}
