@@ -50,6 +50,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: binaries
+
+      - name: List Files
+        run: ls -R
+
+      # Move downloaded files if necessary
+      - name: Move Artifacts
+        run: mv binaries/* build/ || true  
       
       - name: Move Artifacts
         run: mv binaries/* build/
