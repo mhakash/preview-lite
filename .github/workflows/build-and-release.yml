@@ -2,6 +2,10 @@ name: Release Binaries
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag for the release (e.g., v1.0.0)'
+        required: true
 
 jobs:
   build:
